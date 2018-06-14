@@ -4,7 +4,7 @@ package com.example.demo;
  * @author jiangxinlin
  * @version 2018-06-12
  */
-public class RunnableTest implements Runnable {
+public class ThreadLocalTest implements Runnable {
 
     public static final ThreadLocal<Integer> THREAD_LOCAL = new ThreadLocal<Integer>() {
         @Override
@@ -31,9 +31,9 @@ public class RunnableTest implements Runnable {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        RunnableTest runnableTest = new RunnableTest();
-        Thread t1 = new Thread(runnableTest);
-        Thread t2 = new Thread(runnableTest);
+        ThreadLocalTest threadLocalTest = new ThreadLocalTest();
+        Thread t1 = new Thread(threadLocalTest);
+        Thread t2 = new Thread(threadLocalTest);
         t1.start();
         t2.start();
     }
