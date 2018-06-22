@@ -2,14 +2,11 @@ package com.example.demo;
 
 import org.junit.Test;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 /**
  * @author jiangxinlin
  * @version 2018-06-21
  */
-public class AlternateTest {
+public class AlternatePrintBySynchronizedTest {
 
     public volatile Integer count = 0;
     public volatile boolean flag = false;
@@ -27,8 +24,8 @@ public class AlternateTest {
             this.num = num;
         }
 
-        AlternateTest alternateTest;
-        public ThreadA (AlternateTest alternateTest) {
+        AlternatePrintBySynchronizedTest alternateTest;
+        public ThreadA (AlternatePrintBySynchronizedTest alternateTest) {
             this.alternateTest = alternateTest;
         }
 
@@ -62,24 +59,24 @@ public class AlternateTest {
             this.num = num;
         }
 
-        AlternateTest alternateTest;
-        public ThreadB (AlternateTest alternateTest) {
-            this.alternateTest = alternateTest;
+        AlternatePrintBySynchronizedTest test;
+        public ThreadB (AlternatePrintBySynchronizedTest alternateTest) {
+            this.test = alternateTest;
         }
 
         @Override
         public void run() {
             System.out.println("------" + Thread.currentThread().getName() + "------");
             while (true) {
-                synchronized (alternateTest) {
+                synchronized (test) {
                     if (flag) {
                         count++;
                         flag = false;
                         System.out.println(Thread.currentThread().getName() + ": " + count);
-                        alternateTest.notifyAll();
+                        test.notifyAll();
                     } else {
                         try {
-                            alternateTest.wait();
+                            test.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -94,7 +91,7 @@ public class AlternateTest {
     public void test() {
 
         Num num = new Num();
-        AlternateTest alternateTest = new AlternateTest();
+        AlternatePrintBySynchronizedTest alternateTest = new AlternatePrintBySynchronizedTest();
 
         Thread thread1 = new Thread(new ThreadA(alternateTest), "A");
         Thread thread2 = new Thread(new ThreadB(alternateTest), "B");
