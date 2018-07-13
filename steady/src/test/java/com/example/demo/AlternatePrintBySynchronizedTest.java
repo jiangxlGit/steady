@@ -11,37 +11,26 @@ public class AlternatePrintBySynchronizedTest {
     public volatile Integer count = 0;
     public volatile boolean flag = false;
 
-    class Num {
-        public volatile Integer num = 0;
-        public volatile boolean flag = false;
-    }
-
     class ThreadA implements Runnable {
 
-        Num num;
-
-        public ThreadA (Num num) {
-            this.num = num;
-        }
-
-        AlternatePrintBySynchronizedTest alternateTest;
+        AlternatePrintBySynchronizedTest test;
         public ThreadA (AlternatePrintBySynchronizedTest alternateTest) {
-            this.alternateTest = alternateTest;
+            this.test = alternateTest;
         }
 
         @Override
         public void run() {
             System.out.println("------" + Thread.currentThread().getName() + "------");
             while (true) {
-                synchronized (alternateTest) {
+                synchronized (test) {
                     if (!flag) {
                         count++;
                         flag = true;
                         System.out.println(Thread.currentThread().getName() + ": " + count);
-                        alternateTest.notifyAll();
+                        test.notifyAll();
                     } else {
                         try {
-                            alternateTest.wait();
+                            test.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -52,12 +41,6 @@ public class AlternatePrintBySynchronizedTest {
     }
 
     class ThreadB implements Runnable {
-
-        Num num;
-
-        public ThreadB (Num num) {
-            this.num = num;
-        }
 
         AlternatePrintBySynchronizedTest test;
         public ThreadB (AlternatePrintBySynchronizedTest alternateTest) {
@@ -90,12 +73,11 @@ public class AlternatePrintBySynchronizedTest {
     @Test
     public void test() {
 
-        Num num = new Num();
-        AlternatePrintBySynchronizedTest alternateTest = new AlternatePrintBySynchronizedTest();
+        AlternatePrintBySynchronizedTest test = new AlternatePrintBySynchronizedTest();
 
-        Thread thread1 = new Thread(new ThreadA(alternateTest), "A");
-        Thread thread2 = new Thread(new ThreadB(alternateTest), "B");
-        Thread thread3 = new Thread(new ThreadB(alternateTest), "C");
+        Thread thread1 = new Thread(new ThreadA(test), "A");
+        Thread thread2 = new Thread(new ThreadB(test), "B");
+        Thread thread3 = new Thread(new ThreadB(test), "C");
         thread1.start();
         thread2.start();
         thread3.start();
